@@ -39,7 +39,7 @@ public class MemberService {
 
         // 있으면 안되는 값
         if (baseUserDto.getMemberId() != null) {
-            throw new Exception("잘못된 접근입니다.");
+            return -2;
         }
 
         final String memberId = common.createPrimaryKey(10);

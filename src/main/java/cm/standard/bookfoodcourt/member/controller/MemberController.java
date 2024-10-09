@@ -56,6 +56,13 @@ public class MemberController {
             return ResponseEntity.ok(apiResponse);
         }
 
+        if (joinResult == -2) {
+            apiResponse.code = "996";
+            apiResponse.message = "잘못된 접근입니다.";
+
+            return ResponseEntity.badRequest().body(apiResponse);
+        }
+
         apiResponse.code = "998";
         apiResponse.message = "회원가입에 실패했습니다. 다시 시도해주세요.";
 
