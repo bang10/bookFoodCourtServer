@@ -39,3 +39,7 @@
 - ORM: mybatis
 - RDS: redis 7.2.5
 - 번호 인증: coolsms (유료)
+
+## 테스트 방법
+- API: postman
+- 비지니스로직: 프로젝트 내 test 진행
