@@ -42,4 +42,27 @@
             AND USER_NAME = #{userName}
         </if>
     </select>
+
+    <insert id="joinMember" parameterType="cm.standard.bookfoodcourt.dto.BaseUserDto">
+        /* MemberMapper.joinMember */
+        INSERT INTO MEMBER
+        (MEMBER_ID,
+         USER_ID,
+         PASSCODE,
+         USER_NAME,
+         TELL_NUMBER,
+         SYS_REG_ID,
+         SYS_MOD_ID,
+         STATUS,
+         NOTE)
+        VALUES (#{memberId},
+                #{userId},
+                #{passcode},
+                #{userName},
+                #{tellNumber},
+                #{sysRegId},
+                #{sysModId},
+                #{status},
+                #{note})
+    </insert>
 </mapper>

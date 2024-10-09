@@ -13,4 +13,11 @@ public interface MemberMapper {
      * @return
      */
     public List<BaseUserDto> getMemberList(BaseUserDto baseUserDto);
+
+    /**
+     * 회원 가입
+     * @param baseUserDto
+     * @return
+     */
+    public Integer joinMember(BaseUserDto baseUserDto);
 }

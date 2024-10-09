@@ -31,6 +31,10 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
 //    implementation group: 'org.mybatis', name: 'mybatis-spring', version: '3.0.3'
     implementation group: 'org.mybatis.spring.boot', name: 'mybatis-spring-boot-starter', version: '3.0.3'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '3.3.0'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '3.3.3'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '3.3.2'
+
 
 
 
