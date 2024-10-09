@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cm.standard.bookfoodcourt.mapper.MemberMapper">
+    <select id="getMemberList" parameterType="cm.standard.bookfoodcourt.dto.BaseUserDto" resultType="cm.standard.bookfoodcourt.dto.BaseUserDto">
+        /*MemberMapper.getMemberList*/
+        SELECT
+            MEMBER_ID,
+            USER_ID,
+            PASSCODE,
+            USER_NAME,
+            TELL_NUMBER,
+            SYS_REG_DATE,
+            SYS_REG_ID,
+            SYS_MOD_DATE,
+            SYS_MOD_ID,
+            STATUS,
+            NOTE
+        FROM MEMBER
+        WHERE 1=1
+        <if test="memberId != null and memberId != ''">
+            AND MEMBER_ID = #{memberId}
+        </if>
+        <if test="userId != null and userId != ''">
+            AND USER_ID = #{userId}
+        </if>
+        <if test="viewStdDate != null and viewStdDate !=''">
+            AND DATE_FORMAT(SYS_REG_DATE, '%Y%m%d') <![CDATA[<=]]> #{viewStdDate}
+        </if>
+        <if test="viewEndDate != null and viewEndDate !=''">
+            AND DATE_FORMAT(SYS_REG_DATE, '%Y%m%d') >= #{viewEndDate}
+        </if>
+        <if test="status != null and status != ''">
+            AND STATUS = #{status}
+        </if>
+        <if test="tellNumber != null and tellNumber != ''">
+            AND TELL_NUMBER = #{tellNumber}
+        </if>
+        <if test="userName != null and userName != ''">
+            AND USER_NAME = #{userName}
+        </if>
+    </select>
+</mapper>
