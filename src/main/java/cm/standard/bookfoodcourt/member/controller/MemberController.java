@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api-1/member")
 public class MemberController {
     private final MemberService memberService;
+    private final RedisService redisService;
 
     @PostMapping("/join")
     public ResponseEntity<ApiResponse<Integer>> join(@RequestBody @Valid BaseUserDto baseUserDto) throws Exception {
@@ -38,7 +39,14 @@ public class MemberController {
             return ResponseEntity.ok(apiResponse);
         }
 
-        // TODO 번호인증 여부 확인
+        // 번호인증 여부 확인
+        final String resultTellAuth = redisService.getData("JOIN_KEY_" + baseUserDto.getTellNumber(), String.class);
+        if (resultTellAuth == null) {
+            apiResponse.code = "995";
+            apiResponse.message = "번호 인증을 진행해 주세요.";
+
+            return ResponseEntity.ok(apiResponse);
+        }
 
         // 가입
         Integer joinResult = memberService.memberJoin(baseUserDto);
@@ -65,6 +73,8 @@ public class MemberController {
 
         apiResponse.code = "998";
         apiResponse.message = "회원가입에 실패했습니다. 다시 시도해주세요.";
+
+        redisService.deleteData("JOIN_KEY_" + baseUserDto.getTellNumber());
 
         return ResponseEntity.ok(apiResponse);
     }

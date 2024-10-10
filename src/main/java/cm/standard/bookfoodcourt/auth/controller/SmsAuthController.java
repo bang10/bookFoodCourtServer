@@ -91,6 +91,9 @@ public class SmsAuthController {
         apiResponse.message = "인증번호가 일치합니다.";
         apiResponse.result = true;
 
+        // 회원 가입시 사용되는 레디스
+        redisService.saveDateSecond("JOIN_KEY_" + authResultDto.getSendTo(), "SUCCESS", 1800L);
+
         return ResponseEntity.ok(apiResponse);
     }
 }
