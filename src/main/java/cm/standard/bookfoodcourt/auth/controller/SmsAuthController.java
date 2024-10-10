@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -51,8 +52,33 @@ public class SmsAuthController {
     }
 
     @PostMapping("/check/sms")
+    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse<Boolean>> checkSms(@RequestBody AuthResultDto authResultDto) throws Exception {
         ApiResponse<Boolean> apiResponse = new ApiResponse<>();
+        if (!authResultDto.getRequestRedisType().equals("join") && !authResultDto.getRequestRedisType().equals("id") && !authResultDto.getRequestRedisType().equals("pass")) {
+            apiResponse.code = "994";
+            apiResponse.message = "잘못된 코드입니다.";
+            apiResponse.result = false;
+
+            return ResponseEntity.ok(apiResponse);
+        }
+
+        String key = "";
+        switch (authResultDto.getRequestRedisType()) {
+            case "join" -> key = "JOIN_KEY";
+            case "id" -> key = "ID_KEY";
+            case "pass" -> key = "PASS_KEY";
+            default -> {
+                log.debug("SmsAuthController checkSms >>> Not found key code: {}", authResultDto);
+
+                apiResponse.code = "994";
+                apiResponse.message = "일치하는 코드가 없습니다.";
+                apiResponse.result = false;
+
+                return ResponseEntity.ok(apiResponse);
+            }
+        }
+
         if (authResultDto.getSendTo() == null || authResultDto.getCode() == null) {
             apiResponse.code = "998";
             apiResponse.message = "전화번호, 인증번호는 필수 값입니다.";
@@ -92,7 +118,7 @@ public class SmsAuthController {
         apiResponse.result = true;
 
         // 회원 가입시 사용되는 레디스
-        redisService.saveDateSecond("JOIN_KEY_" + authResultDto.getSendTo(), "SUCCESS", 1800L);
+        redisService.saveDateSecond(key + authResultDto.getSendTo(), "SUCCESS", 1800L);
 
         return ResponseEntity.ok(apiResponse);
     }

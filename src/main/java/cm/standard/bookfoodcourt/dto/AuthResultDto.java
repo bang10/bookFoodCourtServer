@@ -24,4 +24,5 @@ public class AuthResultDto implements Serializable {
     private LocalDateTime sysRegDate;
 
     private String code;
+    private String requestRedisType;
 }
