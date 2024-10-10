@@ -1,7 +1,9 @@
 package cm.standard.bookfoodcourt.auth.service;
 
 import cm.standard.bookfoodcourt.dto.AuthDto;
+import cm.standard.bookfoodcourt.dto.AuthResultDto;
 import cm.standard.bookfoodcourt.mapper.AuthMapper;
+import cm.standard.bookfoodcourt.util.Common;
 import cm.standard.bookfoodcourt.util.code.AuthTypeCode;
 import cm.standard.bookfoodcourt.util.exception.AuthInfoNotFoundException;
 import cm.standard.bookfoodcourt.util.redis.RedisService;
@@ -13,15 +15,18 @@ import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class SmsAuthService {
     private final AuthMapper authMapper;
     private final RedisService redisService;
+    private final Common common;
     /**
      * 단건 인증 메시지 전송
      * @param to
@@ -64,5 +69,24 @@ public class SmsAuthService {
         message.setText(verificationCodeMessage);
 
         return defaultMessageService.sendOne(new SingleMessageSendingRequest(message));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void saveAuthResult (SingleMessageSentResponse param) {
+        AuthResultDto authResultDto = new AuthResultDto();
+        authResultDto.setGroupId(param.getGroupId());
+        authResultDto.setSendTo(param.getTo());
+        authResultDto.setSendFrom(param.getFrom());
+        authResultDto.setMessageType(String.valueOf(param.getType()));
+        authResultDto.setStatusMessage(param.getStatusMessage());
+        authResultDto.setCountry(param.getCountry());
+        authResultDto.setMessageId(param.getMessageId());
+        authResultDto.setStatusCode(param.getStatusCode());
+        authResultDto.setAccountId(param.getAccountId());
+
+        final String resultId = common.createPrimaryKey(320);
+        authResultDto.setAuthId(resultId);
+
+        authMapper.saveAuthResult(authResultDto);
     }
 }

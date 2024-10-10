@@ -19,4 +19,30 @@
         AND API_TYPE = #{apiType}
     </select>
 
+    <insert id="saveAuthResult" parameterType="cm.standard.bookfoodcourt.dto.AuthResultDto">
+        INSERT INTO AUTH_RESULT(
+            AUTH_ID,
+            GROUP_ID,
+            SEND_TO,
+            SEND_FROM,
+            MESSAGE_TYPE,
+            STATUS_MESSAGE,
+            COUNTRY,
+            MESSAGE_ID,
+            STATUS_CODE,
+            ACCOUNT_ID
+        ) VALUES (
+            #{authId},
+            #{groupId},
+            #{sendTo},
+            #{sendFrom},
+            #{messageType},
+            #{statusMessage},
+            #{country},
+            #{messageId},
+            #{statusCode},
+            #{accountId}
+        )
+    </insert>
+
 </mapper>
