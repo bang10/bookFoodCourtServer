@@ -16,6 +16,7 @@ public enum TypeCode {
     PROMOTION_CODE (110, "PC"),
     STORE(300, "store"),
     FOOD(310, "food"),
+    AUTH_CODE(320, "auth"),
     ;
 
     private int code;

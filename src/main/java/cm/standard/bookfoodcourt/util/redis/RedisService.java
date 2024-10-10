@@ -19,8 +19,8 @@ public class RedisService {
         redisTemplate.opsForValue().set(key, value, timeOut, TimeUnit.SECONDS);
     }
 
-    public Object getData(String key) {
-        return redisTemplate.opsForValue().get(key);
+    public <T> T getData(String key, Class<T> clazz) {
+        return (T) redisTemplate.opsForValue().get(key);
     }
 
     public void deleteData(String key) {

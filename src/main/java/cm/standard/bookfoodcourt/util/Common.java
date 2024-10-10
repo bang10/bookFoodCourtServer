@@ -49,9 +49,11 @@ public class Common {
         }
     }
 
-
-
-    private int randomValue(int min, int max) {
+    public int randomValue(int min, int max) {
         return new Random().nextInt(min, max);
+    }
+
+    public String removeSpecialEngCharAndSpaces (String str) {
+        return str.replaceAll("[^a-zA-Z0-9]", "");
     }
 }

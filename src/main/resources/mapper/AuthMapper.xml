@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cm.standard.bookfoodcourt.mapper.AuthMapper">
+    <select id="getAuthInfo" parameterType="cm.standard.bookfoodcourt.dto.AuthDto" resultType="cm.standard.bookfoodcourt.dto.AuthDto">
+        SELECT
+            API_KEY
+        , API_SECRET_KEY
+        , KEY_NAME
+        , NOTE
+        , API_TYPE
+        , API_USING
+        , API_DOMAIN
+        , FROM_NUMBER
+        FROM API_KEY
+        WHERE 1=1
+        AND API_TYPE = #{apiType}
+    </select>
+
+</mapper>

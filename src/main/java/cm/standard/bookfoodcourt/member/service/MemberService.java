@@ -31,7 +31,7 @@ public class MemberService {
      */
     @Transactional(rollbackFor = Exception.class)
     public Integer memberJoin(BaseUserDto baseUserDto) throws Exception {
-        final String redisResult = (String) redisService.getData(baseUserDto.getUserId());
+        final String redisResult = redisService.getData(baseUserDto.getUserId(), String.class);
 
         if (redisResult != null) {
             return -1;
