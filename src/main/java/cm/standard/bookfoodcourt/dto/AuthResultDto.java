@@ -22,4 +22,6 @@ public class AuthResultDto implements Serializable {
     private String statusCode;
     private String accountId;
     private LocalDateTime sysRegDate;
+
+    private String code;
 }

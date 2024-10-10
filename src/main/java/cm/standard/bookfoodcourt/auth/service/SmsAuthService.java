@@ -71,6 +71,10 @@ public class SmsAuthService {
         return defaultMessageService.sendOne(new SingleMessageSendingRequest(message));
     }
 
+    /**
+     * 전송결과 저장
+     * @param param
+     */
     @Transactional(rollbackFor = Exception.class)
     public void saveAuthResult (SingleMessageSentResponse param) {
         AuthResultDto authResultDto = new AuthResultDto();
@@ -85,6 +89,10 @@ public class SmsAuthService {
         authResultDto.setAccountId(param.getAccountId());
 
         final String resultId = common.createPrimaryKey(320);
+        if (resultId == null) {
+            log.error("SmsAuthService.saveAuthResult >>> resultId is null");
+            throw new NullPointerException("SmsAuthService.saveAuthResult >>> resultId is null");
+        }
         authResultDto.setAuthId(resultId);
 
         authMapper.saveAuthResult(authResultDto);

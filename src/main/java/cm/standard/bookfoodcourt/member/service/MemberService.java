@@ -49,6 +49,10 @@ public class MemberService {
         }
 
         final String memberId = common.createPrimaryKey(10);
+        if (memberId == null) {
+            log.error("MemberService.memberJoin memberId is null");
+            throw new NullPointerException("MemberService.memberJoin >>> memberId is null");
+        }
         String sysRegId = "system";
         String status = "30"; // 승인전
         final String encodingPasscode = passwordEncoder.encode(baseUserDto.getPasscode());
