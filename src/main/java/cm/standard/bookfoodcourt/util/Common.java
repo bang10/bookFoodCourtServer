@@ -1,6 +1,6 @@
 package cm.standard.bookfoodcourt.util;
 
-import cm.standard.bookfoodcourt.util.code.MemberCode;
+import cm.standard.bookfoodcourt.util.code.TypeCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +22,7 @@ public class Common {
     public String createPrimaryKey (int code) {
         log.info("Common.createPrimaryKey >>> Create Primary Key");
 
-        final String value = MemberCode.getValueByCode(code);
+        final String value = TypeCode.getValueByCode(code);
         if (value == null) {
             log.error("Common.createPrimaryKey >>> value is null");
             return null;

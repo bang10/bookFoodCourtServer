@@ -69,4 +69,42 @@ public class MemberController {
         return ResponseEntity.ok(apiResponse);
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<Boolean>> login(@RequestBody BaseUserDto baseUserDto) throws Exception {
+        // TODO 같은 IP로 연속적으로 요청이 온다면 차단
+
+        log.info("Start login ID: " + baseUserDto.getUserId());
+        ApiResponse<Boolean> apiResponse = new ApiResponse<>();
+
+        if (baseUserDto.getUserId() == null || baseUserDto.getUserId().isBlank()
+        || baseUserDto.getPasscode() == null || baseUserDto.getPasscode().isBlank()) {
+            log.info("Login fail because user id or passcode is blank");
+            apiResponse.code = "999";
+            apiResponse.message = "아이디, 비밀번호를 확인해 주세요.";
+            apiResponse.result = false;
+            return ResponseEntity.ok(apiResponse);
+        }
+
+        final Boolean loginResult = memberService.login(baseUserDto);
+        // 미승인된 사용자
+        if (loginResult == null) {
+            apiResponse.code = "998";
+            apiResponse.message = "미승인된 회원입니다.";
+            apiResponse.result = false;
+            return ResponseEntity.ok(apiResponse);
+        }
+
+        if (!loginResult) {
+            apiResponse.code = "997";
+            apiResponse.message = "일치하는 정보가 없습니다.";
+            apiResponse.result = false;
+            return ResponseEntity.ok(apiResponse);
+        }
+
+        apiResponse.code = "0";
+        apiResponse.message = "로그인에 성공했습니다.";
+        apiResponse.result = true;
+        return ResponseEntity.ok(apiResponse);
+    }
+
 }

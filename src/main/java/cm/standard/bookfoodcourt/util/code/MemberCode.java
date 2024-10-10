@@ -1,21 +1,14 @@
 package cm.standard.bookfoodcourt.util.code;
 
 public enum MemberCode {
-    MEMBER_JOIN_CODE(10, "MJ"),
-    STORE_CODE(20, "SC"),
-    HIGH_CATEGORY_CODE(30, "HC"),
-    MIDDLE_CATEGORY_CODE(40, "MC"),
-    LOW_CATEGORY_CODE(50, "LC"),
-    FOOD_INFO_CODE (60, "FI"),
-    FOOD_STORE_INFO_CODE(70, "FS"),
-    LIKE_FOOD_CODE(80, "LF"),
-    CART_FOOD_CODE(90, "CF"),
-    PAYMENT_CODE(90, "PAY"),
-    ORDER_CODE (100, "OC"),
-    FOOD_PROMOTION_CODE (100, "FPC"),
-    PROMOTION_CODE (110, "PC"),
-    STORE(300, "store"),
-    FOOD(310, "food"),
+    NEW(10, "new"),
+    NORMAL(20, "normal"),
+    BEFORE_PERMISSION(30, "before-permission"),
+    OK(40, "ok"),
+    REJECTED(50, "rejected"),
+    DELETED(60, "deleted"),
+    THROW_OUT(70, "through-out"),
+
     ;
 
     private int code;

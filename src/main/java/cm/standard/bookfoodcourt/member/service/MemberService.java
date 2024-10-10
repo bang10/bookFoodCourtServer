@@ -23,6 +23,12 @@ public class MemberService {
     private final Common common;
     private final RedisService redisService;
 
+    /**
+     * 회원 가입
+     * @param baseUserDto
+     * @return
+     * @throws Exception
+     */
     @Transactional(rollbackFor = Exception.class)
     public Integer memberJoin(BaseUserDto baseUserDto) throws Exception {
         final String redisResult = (String) redisService.getData(baseUserDto.getUserId());
@@ -69,6 +75,39 @@ public class MemberService {
 
 
         return result;
+    }
+
+    /**
+     * 로그인
+     * @param baseUserDto
+     * @return
+     * @throws Exception
+     */
+    public Boolean login(BaseUserDto baseUserDto) throws Exception {
+        BaseUserDto userDto = new BaseUserDto();
+        userDto.setUserId(baseUserDto.getUserId());
+
+        BaseUserDto userInfo = this.getMemberInfo(userDto);
+        if (userInfo == null) {
+            log.info("MemberService.login Non-existent information >>> target: " + userDto.getUserId());
+            return false;
+        }
+
+        // 승인된 사용자 여부 확인
+        String status = userInfo.getStatus();
+        if (!status.equals("10") && !status.equals("20") && !status.equals("40")) {
+            log.info("MemberService.login Unapproved information >>> target: " + userDto.getUserId());
+            return null;
+        }
+
+        String userPasscode = userInfo.getPasscode();
+        if (passwordEncoder.matches(baseUserDto.getPasscode(), userPasscode)) {
+            log.info("MemberService.login Successful >>> target: " + userDto.getUserId());
+            return true;
+        }
+
+        log.info("MemberService.login wrong passcode >>> target: " + userDto.getUserId());
+        return false;
     }
 
     /**
