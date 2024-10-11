@@ -20,4 +20,11 @@ public interface MemberMapper {
      * @return
      */
     public Integer joinMember(BaseUserDto baseUserDto);
+
+    /**
+     * 회원정보 수정
+     * @param baseUserDto
+     * @return
+     */
+    public Integer updateMember(BaseUserDto baseUserDto);
 }

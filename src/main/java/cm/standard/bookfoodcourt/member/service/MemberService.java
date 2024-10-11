@@ -142,4 +142,16 @@ public class MemberService {
         return memberMapper.getMemberList(baseUserDto);
     }
 
+    /**
+     * 회원 기본정보 업데이트
+     * @param baseUserDto
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public Integer updateBaseUserInfo (BaseUserDto baseUserDto) {
+        final String passcode = passwordEncoder.encode(baseUserDto.getPasscode());
+        baseUserDto.setPasscode(passcode);
+        return memberMapper.updateMember(baseUserDto);
+    }
+
 }

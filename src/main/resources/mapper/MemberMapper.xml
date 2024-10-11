@@ -65,4 +65,37 @@
                 #{status},
                 #{note})
     </insert>
+
+    <update id="updateMember" parameterType="cm.standard.bookfoodcourt.dto.BaseUserDto">
+        UPDATE MEMBER
+        SET SYS_REG_ID = 'system'
+            <if test="passcode != null and !passcode.equals('')">
+                , PASSCODE = #{passcode}
+            </if>
+            <if test="status != null and !status.equals('')">
+                , STATUS = #{status}
+            </if>
+            <if test="userName != null and !userName.equals('')">
+                , USER_NAME = #{userName}
+            </if>
+            <if test="tellNumber != null and !tellNumber.equals('')">
+                , TELL_NUMBER = #{tellNumber}
+            </if>
+            <if test="note != null and !note.equals('')">
+                , NOTE = #{note}
+            </if>
+        WHERE 1=1
+            <if test="userId != null and !userId.equals('')">
+                AND USER_ID = #{userId}
+            </if>
+            <if test="memberId != null and !memberId.equals('')">
+                AND MEMBER_ID = #{memberId}
+            </if>
+            <if test="viewStdDate != null and viewStdDate !='' and viewEndDate != null and viewEndDate !=''">
+                AND SYS_REG_DATE BETWEEN DATE_FORMAT(#{viewStdDate}, '%Y%m%d') AND DATE_FORMAT(S#{viewEndDate}, '%Y%m%d')
+            </if>
+            <if test="status != null and status != ''">
+                AND STATUS = #{status}
+            </if>
+    </update>
 </mapper>

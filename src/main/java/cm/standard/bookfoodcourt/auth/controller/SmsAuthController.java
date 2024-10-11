@@ -3,6 +3,7 @@ package cm.standard.bookfoodcourt.auth.controller;
 import cm.standard.bookfoodcourt.auth.service.SmsAuthService;
 import cm.standard.bookfoodcourt.dto.AuthResultDto;
 import cm.standard.bookfoodcourt.dto.BaseUserDto;
+import cm.standard.bookfoodcourt.dto.ChangeUserInfoDto;
 import cm.standard.bookfoodcourt.util.Common;
 import cm.standard.bookfoodcourt.util.api.ApiResponse;
 import cm.standard.bookfoodcourt.util.redis.RedisService;
