@@ -65,9 +65,9 @@ public class SmsAuthController {
 
         String key = "";
         switch (authResultDto.getRequestRedisType()) {
-            case "join" -> key = "JOIN_KEY";
-            case "id" -> key = "ID_KEY";
-            case "pass" -> key = "PASS_KEY";
+            case "join" -> key = "JOIN_KEY_";
+            case "id" -> key = "ID_KEY_";
+            case "pass" -> key = "PASS_KEY_";
             default -> {
                 log.debug("SmsAuthController checkSms >>> Not found key code: {}", authResultDto);
 
@@ -117,7 +117,7 @@ public class SmsAuthController {
         apiResponse.message = "인증번호가 일치합니다.";
         apiResponse.result = true;
 
-        // 회원 가입시 사용되는 레디스
+        // 타입에 맞는 인증결과 저장
         redisService.saveDateSecond(key + authResultDto.getSendTo(), "SUCCESS", 1800L);
 
         return ResponseEntity.ok(apiResponse);
