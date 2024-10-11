@@ -55,6 +55,13 @@ public class SmsAuthController {
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse<Boolean>> checkSms(@RequestBody AuthResultDto authResultDto) throws Exception {
         ApiResponse<Boolean> apiResponse = new ApiResponse<>();
+        if (authResultDto.getRequestRedisType() == null) {
+            apiResponse.code = "993";
+            apiResponse.code = "requestRedisType is a required value.";
+            apiResponse.result = false;
+
+            return ResponseEntity.badRequest().body(apiResponse);
+        }
         if (!authResultDto.getRequestRedisType().equals("join") && !authResultDto.getRequestRedisType().equals("id") && !authResultDto.getRequestRedisType().equals("pass")) {
             apiResponse.code = "994";
             apiResponse.message = "잘못된 코드입니다.";
