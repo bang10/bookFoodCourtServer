@@ -29,6 +29,16 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
+//    implementation group: 'org.mybatis', name: 'mybatis-spring', version: '3.0.3'
+    implementation group: 'org.mybatis.spring.boot', name: 'mybatis-spring-boot-starter', version: '3.0.3'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '3.3.0'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '3.3.3'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '3.3.2'
+    implementation group: 'net.nurigo', name: 'sdk', version: '4.3.0'
+
+
+
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
