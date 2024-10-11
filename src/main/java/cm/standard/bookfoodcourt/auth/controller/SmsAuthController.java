@@ -2,6 +2,7 @@ package cm.standard.bookfoodcourt.auth.controller;
 
 import cm.standard.bookfoodcourt.auth.service.SmsAuthService;
 import cm.standard.bookfoodcourt.dto.AuthResultDto;
+import cm.standard.bookfoodcourt.dto.BaseUserDto;
 import cm.standard.bookfoodcourt.util.Common;
 import cm.standard.bookfoodcourt.util.api.ApiResponse;
 import cm.standard.bookfoodcourt.util.redis.RedisService;
@@ -21,8 +22,10 @@ public class SmsAuthController {
     private final Common common;
     private final RedisService redisService;
 
-    @PostMapping("/send/sms/{tellNumber}")
-    public ResponseEntity<ApiResponse<Boolean>> sendSms(@PathVariable("tellNumber") String tellNumber) throws Exception {
+    @PostMapping("/send/sms")
+    public ResponseEntity<ApiResponse<Boolean>> sendSms(@RequestBody BaseUserDto baseUserDto) throws Exception {
+        final String tellNumber = baseUserDto.getTellNumber();
+
         log.info("Start tellNumber auth check tellNumber: {}", tellNumber);
         ApiResponse<Boolean> apiResponse = new ApiResponse<>();
 

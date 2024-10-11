@@ -117,4 +117,59 @@ public class MemberController {
         return ResponseEntity.ok(apiResponse);
     }
 
+    @PostMapping("/info/check/id")
+    public ResponseEntity<ApiResponse<String>> infoCheck(@RequestBody BaseUserDto baseUserDto) throws Exception {
+        log.info("MemberController.infoCheck Start >>> ID: " + baseUserDto);
+        ApiResponse<String> apiResponse = new ApiResponse<>();
+
+        if (baseUserDto.getUserName() == null || baseUserDto.getUserName().isBlank()
+        || baseUserDto.getTellNumber() == null || baseUserDto.getTellNumber().isBlank()) {
+            apiResponse.code = "999";
+            apiResponse.message = "필수 값이 없습니다.";
+            apiResponse.result = null;
+
+            return ResponseEntity.badRequest().body(apiResponse);
+        }
+
+        // 번호인증 결과 확인
+        final String redisResult = redisService.getData("ID_KEY_" + baseUserDto.getTellNumber(), String.class);
+        if (redisResult == null || redisResult.isBlank() || !redisResult.equals("SUCCESS")) {
+            apiResponse.code = "997";
+            apiResponse.message = "번호 인증이 만료되었습니다. 다시 진행해주세요.";
+            apiResponse.result = null;
+
+            return ResponseEntity.ok(apiResponse);
+        }
+
+        redisService.deleteData("ID_KEY_" + baseUserDto.getTellNumber());
+
+        BaseUserDto userInfoDto = new BaseUserDto();
+        userInfoDto.setUserName(baseUserDto.getUserName());
+        userInfoDto.setTellNumber(baseUserDto.getTellNumber());
+
+        BaseUserDto userInfo = memberService.getMemberInfo(userInfoDto);
+        if (userInfo == null) {
+            apiResponse.code = "998";
+            apiResponse.message = "일치하는 사용자 정보가 없습니다.";
+            apiResponse.result = null;
+
+            return ResponseEntity.ok(apiResponse);
+        }
+
+        final String status = userInfo.getStatus();
+        if (!status.equals("10") && !status.equals("20") && !status.equals("40")) {
+            apiResponse.code = "-1";
+            apiResponse.message = "탈퇴한 회원이거나 미승인된 회원입니다.";
+            apiResponse.result = null;
+
+            return ResponseEntity.ok(apiResponse);
+        }
+
+        apiResponse.code = "0";
+        apiResponse.message = "성공적으로 조회되었습니다.";
+        apiResponse.result = userInfo.getUserId();
+
+        return ResponseEntity.ok(apiResponse);
+    }
+
 }
