@@ -41,6 +41,10 @@ public class SmsAuthService {
             throw new NullPointerException("Type code is null");
         }
 
+        if (!common.isOnlyNumber(to)) {
+            return null;
+        }
+
         // 값 레디스 조회
         AuthDto authResult = redisService.getData(typeCode, AuthDto.class);
         if (authResult == null) {

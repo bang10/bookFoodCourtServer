@@ -56,4 +56,8 @@ public class Common {
     public String removeSpecialEngCharAndSpaces (String str) {
         return str.replaceAll("[^a-zA-Z0-9]", "");
     }
+
+    public Boolean isOnlyNumber(String str) {
+        return str.matches("^[0-9]*$");
+    }
 }
