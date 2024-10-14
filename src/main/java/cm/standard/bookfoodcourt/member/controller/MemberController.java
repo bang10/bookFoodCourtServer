@@ -227,9 +227,50 @@ public class MemberController {
         log.info("MemberController.resetPasscode Start >>> ID: " + changeUserInfoDto.getUserId());
         ApiResponse<Boolean> apiResponse = new ApiResponse<>();
 
+        if (changeUserInfoDto.getUserId() == null || changeUserInfoDto.getUserId().isBlank()) {
+            apiResponse.code = "997";
+            apiResponse.message = "ID는 필수입니다.";
+            apiResponse.result = false;
+            return ResponseEntity.ok(apiResponse);
+        }
+
+        if (changeUserInfoDto.getTellNumber() == null || changeUserInfoDto.getTellNumber().isBlank()) {
+            apiResponse.code = "996";
+            apiResponse.message = "전화번호는 필수입니다.";
+            apiResponse.result = false;
+            return ResponseEntity.ok(apiResponse);
+        }
+
+        if (changeUserInfoDto.getUserName() == null || changeUserInfoDto.getUserName().isBlank()) {
+            apiResponse.code = "996";
+            apiResponse.message = "이름은 필수입니다.";
+            apiResponse.result = false;
+            return ResponseEntity.ok(apiResponse);
+        }
+
         if (!changeUserInfoDto.getPasscode().equals(changeUserInfoDto.getPasscodeCheck())) {
             apiResponse.code = "998";
             apiResponse.message = "비밀번호, 2차 비밀번호가 일치하지 않습니다.";
+            apiResponse.result = false;
+
+            return ResponseEntity.ok(apiResponse);
+        }
+
+        BaseUserDto userInfoDto = new BaseUserDto();
+        userInfoDto.setUserId(changeUserInfoDto.getUserId());
+        userInfoDto.setTellNumber(changeUserInfoDto.getTellNumber());
+        BaseUserDto userInfo = memberService.getMemberInfo(userInfoDto);
+        if (userInfo == null) {
+            apiResponse.code = "995";
+            apiResponse.message = "일치하는 정보가 없습니다.";
+            apiResponse.result = false;
+
+            return ResponseEntity.ok(apiResponse);
+        }
+
+        if (!userInfo.getUserName().equals(changeUserInfoDto.getUserName())) {
+            apiResponse.code = "994";
+            apiResponse.message = "일치하는 정보가 없습니다.";
             apiResponse.result = false;
 
             return ResponseEntity.ok(apiResponse);
