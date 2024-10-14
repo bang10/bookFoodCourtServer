@@ -3,6 +3,7 @@ package cm.standard.bookfoodcourt.member.controller;
 import cm.standard.bookfoodcourt.dto.BaseUserDto;
 import cm.standard.bookfoodcourt.dto.ChangeUserInfoDto;
 import cm.standard.bookfoodcourt.member.service.MemberService;
+import cm.standard.bookfoodcourt.util.Common;
 import cm.standard.bookfoodcourt.util.api.ApiResponse;
 import cm.standard.bookfoodcourt.util.redis.RedisService;
 import jakarta.validation.Valid;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberController {
     private final MemberService memberService;
     private final RedisService redisService;
+    private final Common common;
 
     @PostMapping("/join")
     public ResponseEntity<ApiResponse<Boolean>> join(@RequestBody @Valid BaseUserDto baseUserDto) throws Exception {
@@ -308,4 +310,26 @@ public class MemberController {
         return ResponseEntity.ok(apiResponse);
 
     }
+
+    @PostMapping("/check/user/info")
+    public ResponseEntity<ApiResponse<Boolean>> checkUserInfo(@RequestBody BaseUserDto baseUserDto) throws Exception {
+        ApiResponse<Boolean> apiResponse = new ApiResponse<>();
+
+        final Boolean isAllNull = common.isAllNullFromDto(baseUserDto);
+        if (isAllNull) {
+            apiResponse.code = "-1";
+            apiResponse.message = "잘못된 요청입니다.";
+            apiResponse.result = false;
+
+            return ResponseEntity.ok(apiResponse);
+        }
+
+        final BaseUserDto userInfo = memberService.getMemberInfo(baseUserDto);
+        apiResponse.code = "0";
+        apiResponse.message = "조회에 성공했습니다.";
+        apiResponse.result = userInfo != null;
+
+        return ResponseEntity.ok(apiResponse);
+    }
+
 }
