@@ -52,6 +52,14 @@ public class SmsAuthController {
         String message = "인증번호는 " + randomNumber + "입니다.";
 
         final SingleMessageSentResponse smsResult = smsAuthService.sendSmsOne(originTellNumber, message);
+        if (smsResult == null) {
+            apiResponse.code = "997";
+            apiResponse.message = "전화번호는 숫자만 입력해 주세요.";
+            apiResponse.result = false;
+
+            return ResponseEntity.ok(apiResponse);
+        }
+
         smsAuthService.saveAuthResult(smsResult);
 
         if (smsResult.getStatusCode().equals("2000") || smsResult.getStatusCode().equals("3000") || smsResult.getStatusCode().equals("4000")) {

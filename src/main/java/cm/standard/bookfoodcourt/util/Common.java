@@ -61,6 +61,10 @@ public class Common {
         return str.replaceAll("[^a-zA-Z0-9]", "");
     }
 
+    public Boolean isOnlyNumber(String str) {
+        return str.matches("^[0-9]*$");
+    }
+  
     /**
      * Dto의 모든 값이 null인지 확인
      * String은 빈칸, Integer는 0 값인 경우 null과 같은 처리
