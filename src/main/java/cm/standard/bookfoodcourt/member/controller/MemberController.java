@@ -24,13 +24,13 @@ public class MemberController {
     private final RedisService redisService;
 
     @PostMapping("/join")
-    public ResponseEntity<ApiResponse<Integer>> join(@RequestBody @Valid BaseUserDto baseUserDto) throws Exception {
+    public ResponseEntity<ApiResponse<Boolean>> join(@RequestBody @Valid BaseUserDto baseUserDto) throws Exception {
         log.info("회원가입 시작 >>> ID: " + baseUserDto.getUserId());
-        ApiResponse<Integer> apiResponse = new ApiResponse<>();
+        ApiResponse<Boolean> apiResponse = new ApiResponse<>();
         if (!baseUserDto.getPasscode().equals(baseUserDto.getPasscodeCheck())) {
             apiResponse.code = "994";
             apiResponse.message = "비밀번호, 2차 비밀번호가 일치하지 않습니다.";
-            apiResponse.result = null;
+            apiResponse.result = false;
 
             return ResponseEntity.ok(apiResponse);
         }
@@ -43,7 +43,19 @@ public class MemberController {
         if (userInfo != null) {
             apiResponse.code = "999";
             apiResponse.message = "이미 사용중인 ID입니다.";
+            apiResponse.result = false;
 
+            return ResponseEntity.ok(apiResponse);
+        }
+
+        // 이미 사용된 전화번호
+        userInfoDto.setTellNumber(baseUserDto.getTellNumber());
+        userInfoDto.setUserId(null);
+        userInfo = memberService.getMemberInfo(userInfoDto);
+        if (userInfo != null) {
+            apiResponse.code = "995";
+            apiResponse.message = "이미 사용된 전화번호입니다.";
+            apiResponse.result = false;
             return ResponseEntity.ok(apiResponse);
         }
 
@@ -52,6 +64,7 @@ public class MemberController {
         if (resultTellAuth == null) {
             apiResponse.code = "995";
             apiResponse.message = "번호 인증을 진행해 주세요.";
+            apiResponse.result = false;
 
             return ResponseEntity.ok(apiResponse);
         }
@@ -61,6 +74,7 @@ public class MemberController {
         if (joinResult == 1) {
             apiResponse.code = "0";
             apiResponse.message = "회원가입에 성공했습니다.";
+            apiResponse.result = true;
 
             return ResponseEntity.ok(apiResponse);
         }
@@ -68,6 +82,7 @@ public class MemberController {
         if (joinResult == -1) {
             apiResponse.code = "997";
             apiResponse.message = "이미 가입된 회원입니다.";
+            apiResponse.result = false;
 
             return ResponseEntity.ok(apiResponse);
         }
@@ -75,8 +90,9 @@ public class MemberController {
         if (joinResult == -2) {
             apiResponse.code = "996";
             apiResponse.message = "잘못된 접근입니다.";
+            apiResponse.result = false;
 
-            return ResponseEntity.badRequest().body(apiResponse);
+            return ResponseEntity.ok().body(apiResponse);
         }
 
         apiResponse.code = "998";
@@ -142,9 +158,9 @@ public class MemberController {
         || baseUserDto.getTellNumber() == null || baseUserDto.getTellNumber().isBlank()) {
             apiResponse.code = "999";
             apiResponse.message = "필수 값이 없습니다.";
-            apiResponse.result = null;
+            apiResponse.result = "";
 
-            return ResponseEntity.badRequest().body(apiResponse);
+            return ResponseEntity.ok().body(apiResponse);
         }
 
         // 번호인증 결과 확인
@@ -158,7 +174,7 @@ public class MemberController {
         if (redisResult == null || redisResult.isBlank() || !redisResult.equals("SUCCESS")) {
             apiResponse.code = "997";
             apiResponse.message = "번호 인증이 만료되었습니다. 다시 진행해주세요.";
-            apiResponse.result = null;
+            apiResponse.result = "";
 
             return ResponseEntity.ok(apiResponse);
         }
@@ -178,7 +194,7 @@ public class MemberController {
         if (userInfo == null) {
             apiResponse.code = "998";
             apiResponse.message = "일치하는 사용자 정보가 없습니다.";
-            apiResponse.result = null;
+            apiResponse.result = "";
 
             return ResponseEntity.ok(apiResponse);
         }
@@ -187,7 +203,7 @@ public class MemberController {
         if (!status.equals("10") && !status.equals("20") && !status.equals("40")) {
             apiResponse.code = "-1";
             apiResponse.message = "탈퇴한 회원이거나 미승인된 회원입니다.";
-            apiResponse.result = null;
+            apiResponse.result = "";
 
             return ResponseEntity.ok(apiResponse);
         }
