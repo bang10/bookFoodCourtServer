@@ -30,9 +30,18 @@ public class SmsAuthController {
         log.info("Start tellNumber auth check tellNumber: {}", tellNumber);
         ApiResponse<Boolean> apiResponse = new ApiResponse<>();
 
-        if (baseUserDto.getTellNumber() == null || baseUserDto.getTellNumber().isEmpty()) {
+        if (tellNumber == null || tellNumber.isEmpty()) {
             apiResponse.code = "998";
-            apiResponse.message = "전화번호는 필수 값입니다.";
+            apiResponse.message = "전화번호는 필수입니다.";
+            apiResponse.result = false;
+
+            return ResponseEntity.ok(apiResponse);
+        }
+
+        final boolean isMatch = tellNumber.matches("^010\\d{7,12}$");
+        if (!isMatch) {
+            apiResponse.code = "997";
+            apiResponse.message = "전화번호는 숫자만 옳바른 형식에 맞게 입력해 주세요.";
             apiResponse.result = false;
 
             return ResponseEntity.ok(apiResponse);

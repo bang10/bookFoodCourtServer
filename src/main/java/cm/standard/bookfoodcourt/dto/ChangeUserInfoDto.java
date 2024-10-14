@@ -18,4 +18,5 @@ public class ChangeUserInfoDto {
     private String passcode;
     private String passcodeCheck;
     private String userName;
+    private String tellNumber;
 }

@@ -2,8 +2,12 @@ package cm.standard.bookfoodcourt.util;
 
 import cm.standard.bookfoodcourt.util.code.TypeCode;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -59,5 +63,35 @@ public class Common {
 
     public Boolean isOnlyNumber(String str) {
         return str.matches("^[0-9]*$");
+    }
+  
+    /**
+     * Dto의 모든 값이 null인지 확인
+     * String은 빈칸, Integer는 0 값인 경우 null과 같은 처리
+     * @param dto
+     * @return
+     */
+    public Boolean isAllNullFromDto (Object dto) {
+        if (dto == null) return true;
+
+        BeanWrapper wrapper = new BeanWrapperImpl(dto);
+        for (Field field : dto.getClass().getDeclaredFields()) {
+            Object value = wrapper.getPropertyValue(field.getName());
+
+            if (value != null) {
+                // It is true that type of value is blank, type of int is zero
+                if (value instanceof String && ((String) value).isBlank()) {
+                    continue;
+                }
+
+                if (value instanceof Integer && ((Integer) value).intValue() == 0) {
+                    continue;
+                }
+
+                return false;
+            }
+        }
+
+        return true;
     }
 }
