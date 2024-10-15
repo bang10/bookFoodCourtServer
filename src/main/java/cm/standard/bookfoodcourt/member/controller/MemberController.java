@@ -324,6 +324,9 @@ public class MemberController {
             return ResponseEntity.ok(apiResponse);
         }
 
+        redisService.deleteData("PASS_KEY_" + baseUserDto.getTellNumber());
+        redisService.saveDateSecond("PASS_KEY_CHECK_" + baseUserDto.getUserId(), "SUCCESS", 180L);
+
         final BaseUserDto userInfo = memberService.getMemberInfo(baseUserDto);
         apiResponse.code = "0";
         apiResponse.message = "조회에 성공했습니다.";
