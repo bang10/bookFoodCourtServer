@@ -78,6 +78,8 @@ public class MemberController {
             apiResponse.message = "회원가입에 성공했습니다.";
             apiResponse.result = true;
 
+            redisService.deleteData("JOIN_KEY_" + baseUserDto.getTellNumber());
+
             return ResponseEntity.ok(apiResponse);
         }
 
@@ -99,8 +101,6 @@ public class MemberController {
 
         apiResponse.code = "998";
         apiResponse.message = "회원가입에 실패했습니다. 다시 시도해주세요.";
-
-        redisService.deleteData("JOIN_KEY_" + baseUserDto.getTellNumber());
 
         return ResponseEntity.ok(apiResponse);
     }
