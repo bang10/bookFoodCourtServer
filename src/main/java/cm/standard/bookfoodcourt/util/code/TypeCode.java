@@ -17,6 +17,7 @@ public enum TypeCode {
     STORE(300, "store"),
     FOOD(310, "food"),
     AUTH_CODE(320, "auth"),
+    ADMIN_JOIN_CODE(330, "admin"),
     ;
 
     private int code;

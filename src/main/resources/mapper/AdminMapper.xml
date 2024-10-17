@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cm.standard.bookfoodcourt.mapper.AdminMapper">
+    <select id="getMemberList" parameterType="cm.standard.bookfoodcourt.dto.BaseAdminDto" resultType="cm.standard.bookfoodcourt.dto.BaseAdminDto">
+        /*MemberMapper.getMemberList*/
+        SELECT
+            ADMIN_ID,
+            USER_ID,
+            PASSCODE,
+            USER_NAME,
+            TELL_NUMBER,
+            SYS_REG_DATE,
+            SYS_REG_ID,
+            SYS_MOD_DATE,
+            SYS_MOD_ID,
+            STATUS,
+            DIVISION_CODE,
+            NOTE
+        FROM ADMIN_BASE
+        WHERE 1=1
+        <if test="adminId != null and adminId != ''">
+            AND ADMIN_ID = #{adminId}
+        </if>
+        <if test="userId != null and userId != ''">
+            AND USER_ID = #{userId}
+        </if>
+        <if test="viewStdDate != null and viewStdDate !=''">
+            AND DATE_FORMAT(SYS_REG_DATE, '%Y%m%d') <![CDATA[<=]]> #{viewStdDate}
+        </if>
+        <if test="viewEndDate != null and viewEndDate !=''">
+            AND DATE_FORMAT(SYS_REG_DATE, '%Y%m%d') >= #{viewEndDate}
+        </if>
+        <if test="status != null and status != ''">
+            AND STATUS = #{status}
+        </if>
+        <if test="tellNumber != null and tellNumber != ''">
+            AND TELL_NUMBER = #{tellNumber}
+        </if>
+        <if test="userName != null and userName != ''">
+            AND USER_NAME = #{userName}
+        </if>
+        <if test="divisionCode != null and divisionCode != ''">
+            AND DIVISION_CODE = #{divisionCode}
+        </if>
+    </select>
+
+    <insert id="addAdmin" parameterType="cm.standard.bookfoodcourt.dto.BaseAdminDto">
+        /* MemberMapper.joinMember */
+        INSERT INTO ADMIN_BASE
+        (ADMIN_ID,
+         USER_ID,
+         PASSCODE,
+         USER_NAME,
+         TELL_NUMBER,
+         SYS_REG_ID,
+         SYS_MOD_ID,
+         STATUS,
+         DIVISION_CODE,
+         NOTE)
+        VALUES (#{adminId},
+                #{userId},
+                #{passcode},
+                #{userName},
+                #{tellNumber},
+                #{sysRegId},
+                #{sysModId},
+                #{status},
+                #{divisionCode},
+                #{note})
+    </insert>
+</mapper>
