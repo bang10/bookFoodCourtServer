@@ -6,14 +6,12 @@ import cm.standard.bookfoodcourt.util.api.ApiResponse;
 import cm.standard.bookfoodcourt.util.redis.RedisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin/api-1")
+@CrossOrigin(origins = "http://localhost:9000", allowedHeaders = {"Authorization", "Content-Type"})
 public class AdminController {
     private final AdminService adminService;
     private final RedisService redisService;
@@ -25,6 +23,7 @@ public class AdminController {
      * @throws Exception
      */
     @PostMapping("/login")
+    @CrossOrigin(origins = "http://localhost:9000", allowedHeaders = {"Authorization", "Content-Type"})
     public ResponseEntity<ApiResponse<Boolean>> login(@RequestBody BaseAdminDto baseAdminDto) throws Exception {
         ApiResponse<Boolean> apiResponse = new ApiResponse<>();
 
@@ -33,7 +32,7 @@ public class AdminController {
             apiResponse.message = "필수 값이 없습니다.";
             apiResponse.result = false;
 
-            return ResponseEntity.badRequest().body(apiResponse);
+            return ResponseEntity.ok().body(apiResponse);
         }
 
         if (baseAdminDto.getPasscode() == null || baseAdminDto.getPasscode().isBlank()) {
@@ -41,7 +40,7 @@ public class AdminController {
             apiResponse.message = "필수 값이 없습니다.";
             apiResponse.result = false;
 
-            return ResponseEntity.badRequest().body(apiResponse);
+            return ResponseEntity.ok().body(apiResponse);
         }
 
         Integer loginResultCode =  adminService.adminLogin(baseAdminDto);
@@ -75,14 +74,20 @@ public class AdminController {
         return ResponseEntity.internalServerError().body(apiResponse);
     }
 
+    /**
+     * 관리자 페이지에 사용하는 인증번호 인증
+     * @param baseAdminDto
+     * @return
+     * @throws Exception
+     */
     @PostMapping("/check/code/div")
-    public ResponseEntity<ApiResponse<Boolean>> checkCodeDiv(@RequestBody BaseAdminDto baseAdminDto) throws Exception {
-        ApiResponse<Boolean> apiResponse = new ApiResponse<>();
+    public ResponseEntity<ApiResponse<String>> checkCodeDiv(@RequestBody BaseAdminDto baseAdminDto) throws Exception {
+        ApiResponse<String> apiResponse = new ApiResponse<>();
 
         if (baseAdminDto.getUserId() == null || baseAdminDto.getUserId().isBlank()) {
             apiResponse.code = "999";
             apiResponse.message = "필수 값이 없습니다.";
-            apiResponse.result = false;
+            apiResponse.result = "";
 
             return ResponseEntity.badRequest().body(apiResponse);
         }
@@ -90,7 +95,7 @@ public class AdminController {
         if (baseAdminDto.getCode() == null || baseAdminDto.getCode().isBlank()) {
             apiResponse.code = "998";
             apiResponse.message = "필수 값이 없습니다.";
-            apiResponse.result = false;
+            apiResponse.result = "";
 
             return ResponseEntity.badRequest().body(apiResponse);
         }
@@ -99,7 +104,7 @@ public class AdminController {
         if (redisCode == null || redisCode.isBlank()) {
             apiResponse.code = "997";
             apiResponse.message = "인증이 만료되었습니다.";
-            apiResponse.result = false;
+            apiResponse.result = "";
 
             return ResponseEntity.ok().body(apiResponse);
         }
@@ -107,15 +112,90 @@ public class AdminController {
         if (!redisCode.equals(baseAdminDto.getCode())) {
             apiResponse.code = "996";
             apiResponse.message = "인증번호가 일치하지 않습니다.";
-            apiResponse.result = false;
+            apiResponse.result = "";
+
+            return ResponseEntity.ok().body(apiResponse);
+        }
+
+        BaseAdminDto searchAdminDto = new BaseAdminDto();
+        searchAdminDto.setUserId(baseAdminDto.getUserId());
+
+        final BaseAdminDto adminDto = adminService.getAdminInfo(searchAdminDto);
+        if (adminDto == null) {
+            apiResponse.code = "995";
+            apiResponse.message = "일치하는 정보가 없습니다.";
+            apiResponse.result = "";
+
+            return ResponseEntity.ok().body(apiResponse);
+        }
+
+        Boolean isPermission = adminService.isPermissionMember(adminDto);
+        if (!isPermission) {
+            apiResponse.code = "994";
+            apiResponse.message = "미승인된 사용자입니다.";
+            apiResponse.result = "";
 
             return ResponseEntity.ok().body(apiResponse);
         }
 
         redisService.deleteData(baseAdminDto.getUserId());
+
         apiResponse.code = "0";
         apiResponse.message = "인증에 성공했습니다.";
-        apiResponse.result = true;
+        apiResponse.result = adminDto.getAdminId();
+
+        return ResponseEntity.ok().body(apiResponse);
+    }
+
+    /**
+     * 관리자 ID 찾기
+     * @param baseAdminDto
+     * @return
+     * @throws Exception
+     */
+    @PostMapping("/check/code/manage")
+    public ResponseEntity<ApiResponse<String>> findAdminUserId(@RequestBody BaseAdminDto baseAdminDto) throws Exception {
+        ApiResponse<String> apiResponse = new ApiResponse<>();
+
+        if (baseAdminDto.getUserName() == null || baseAdminDto.getUserName().isBlank()) {
+            apiResponse.code = "999";
+            apiResponse.message = "필수값이 없습니다.";
+            apiResponse.result = "";
+
+            return ResponseEntity.ok().body(apiResponse);
+        }
+
+        if (baseAdminDto.getTellNumber() == null || baseAdminDto.getTellNumber().isBlank()) {
+            apiResponse.code = "999";
+            apiResponse.message = "필수값이 없습니다.";
+            apiResponse.result = "";
+
+            return ResponseEntity.ok().body(apiResponse);
+        }
+
+        final String redisResult = redisService.getData("ADMIN_MANEGE_KEY_" + baseAdminDto.getTellNumber(), String.class);
+        if (redisResult == null || redisResult.isBlank()) {
+            apiResponse.code = "998";
+            apiResponse.message = "아직 인증이 완료되지 않았거나 만료되었습니다. 다시 진행해 주세요.";
+            apiResponse.result = "";
+
+            return ResponseEntity.ok().body(apiResponse);
+        }
+
+        final BaseAdminDto adminDto = adminService.getAdminInfo(baseAdminDto);
+        if (adminDto == null) {
+            apiResponse.code = "996";
+            apiResponse.message = "일치하는 정보가 없습니다.";
+            apiResponse.result = "";
+
+            return ResponseEntity.ok().body(apiResponse);
+        }
+
+        apiResponse.code = "0";
+        apiResponse.message = "성공적으로 조회되었습니다.";
+        apiResponse.result = adminDto.getUserId();
+
+        redisService.deleteData("ADMIN_MANEGE_KEY_" + baseAdminDto.getTellNumber());
 
         return ResponseEntity.ok().body(apiResponse);
     }

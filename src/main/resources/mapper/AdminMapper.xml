@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="cm.standard.bookfoodcourt.mapper.AdminMapper">
-    <select id="getMemberList" parameterType="cm.standard.bookfoodcourt.dto.BaseAdminDto" resultType="cm.standard.bookfoodcourt.dto.BaseAdminDto">
+    <select id="getAdminList" parameterType="cm.standard.bookfoodcourt.dto.BaseAdminDto" resultType="cm.standard.bookfoodcourt.dto.BaseAdminDto">
         /*MemberMapper.getMemberList*/
         SELECT
             ADMIN_ID,
