@@ -6,14 +6,12 @@ import cm.standard.bookfoodcourt.util.api.ApiResponse;
 import cm.standard.bookfoodcourt.util.redis.RedisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin/api-1")
+@CrossOrigin(origins = "http://localhost:9000", allowedHeaders = {"Authorization", "Content-Type"})
 public class AdminController {
     private final AdminService adminService;
     private final RedisService redisService;
@@ -25,6 +23,7 @@ public class AdminController {
      * @throws Exception
      */
     @PostMapping("/login")
+    @CrossOrigin(origins = "http://localhost:9000", allowedHeaders = {"Authorization", "Content-Type"})
     public ResponseEntity<ApiResponse<Boolean>> login(@RequestBody BaseAdminDto baseAdminDto) throws Exception {
         ApiResponse<Boolean> apiResponse = new ApiResponse<>();
 
