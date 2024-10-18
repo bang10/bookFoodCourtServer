@@ -25,15 +25,34 @@ public class AdminService {
     private final SmsAuthService smsAuthService;
     private final RedisService redisService;
 
-    public Integer adminLogin(BaseAdminDto baseAdminDto) throws Exception {
-        baseAdminDto.setDivisionCode("10");
-        final BaseAdminDto adminInfo = this.getAdminInfo(baseAdminDto);
-        if (adminInfo == null) {
+    public Boolean isPermissionMember (BaseAdminDto baseAdminDto) {
+        if (baseAdminDto == null) {
             return null;
         }
 
-        final String status = adminInfo.getStatus();
+        final String status = baseAdminDto.getStatus();
         if (!status.equals("10") && !status.equals("20") && !status.equals("40")) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * 관리자 로그인
+     * @param baseAdminDto
+     * @return
+     * @throws Exception
+     */
+    public Integer adminLogin(BaseAdminDto baseAdminDto) throws Exception {
+        baseAdminDto.setDivisionCode("10");
+        final BaseAdminDto adminInfo = this.getAdminInfo(baseAdminDto);
+        final Boolean isPermission = this.isPermissionMember(adminInfo);
+        if (isPermission == null) {
+            return null;
+        }
+
+        if (!isPermission) {
             return -1;
         }
 

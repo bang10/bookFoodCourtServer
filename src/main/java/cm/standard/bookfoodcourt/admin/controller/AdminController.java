@@ -76,13 +76,13 @@ public class AdminController {
     }
 
     @PostMapping("/check/code/div")
-    public ResponseEntity<ApiResponse<Boolean>> checkCodeDiv(@RequestBody BaseAdminDto baseAdminDto) throws Exception {
-        ApiResponse<Boolean> apiResponse = new ApiResponse<>();
+    public ResponseEntity<ApiResponse<String>> checkCodeDiv(@RequestBody BaseAdminDto baseAdminDto) throws Exception {
+        ApiResponse<String> apiResponse = new ApiResponse<>();
 
         if (baseAdminDto.getUserId() == null || baseAdminDto.getUserId().isBlank()) {
             apiResponse.code = "999";
             apiResponse.message = "필수 값이 없습니다.";
-            apiResponse.result = false;
+            apiResponse.result = "";
 
             return ResponseEntity.badRequest().body(apiResponse);
         }
@@ -90,7 +90,7 @@ public class AdminController {
         if (baseAdminDto.getCode() == null || baseAdminDto.getCode().isBlank()) {
             apiResponse.code = "998";
             apiResponse.message = "필수 값이 없습니다.";
-            apiResponse.result = false;
+            apiResponse.result = "";
 
             return ResponseEntity.badRequest().body(apiResponse);
         }
@@ -99,7 +99,7 @@ public class AdminController {
         if (redisCode == null || redisCode.isBlank()) {
             apiResponse.code = "997";
             apiResponse.message = "인증이 만료되었습니다.";
-            apiResponse.result = false;
+            apiResponse.result = "";
 
             return ResponseEntity.ok().body(apiResponse);
         }
@@ -107,15 +107,37 @@ public class AdminController {
         if (!redisCode.equals(baseAdminDto.getCode())) {
             apiResponse.code = "996";
             apiResponse.message = "인증번호가 일치하지 않습니다.";
-            apiResponse.result = false;
+            apiResponse.result = "";
+
+            return ResponseEntity.ok().body(apiResponse);
+        }
+
+        BaseAdminDto searchAdminDto = new BaseAdminDto();
+        searchAdminDto.setUserId(baseAdminDto.getUserId());
+
+        final BaseAdminDto adminDto = adminService.getAdminInfo(searchAdminDto);
+        if (adminDto == null) {
+            apiResponse.code = "995";
+            apiResponse.message = "일치하는 정보가 없습니다.";
+            apiResponse.result = "";
+
+            return ResponseEntity.ok().body(apiResponse);
+        }
+
+        Boolean isPermission = adminService.isPermissionMember(adminDto);
+        if (!isPermission) {
+            apiResponse.code = "994";
+            apiResponse.message = "미승인된 사용자입니다.";
+            apiResponse.result = "";
 
             return ResponseEntity.ok().body(apiResponse);
         }
 
         redisService.deleteData(baseAdminDto.getUserId());
+
         apiResponse.code = "0";
         apiResponse.message = "인증에 성공했습니다.";
-        apiResponse.result = true;
+        apiResponse.result = adminDto.getAdminId();
 
         return ResponseEntity.ok().body(apiResponse);
     }
