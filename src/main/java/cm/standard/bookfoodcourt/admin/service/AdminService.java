@@ -62,7 +62,7 @@ public class AdminService {
         }
 
         final int randomNumber = common.randomValue(10000, 99999);
-        String message = "인증번호는 " + randomNumber + "입니다.";
+        String message = "[관리자]인증번호는 " + randomNumber + "입니다.";
 
         final SingleMessageSentResponse smsResult = smsAuthService.sendSmsOne(adminInfo.getTellNumber(), message);
         smsAuthService.saveAuthResult(smsResult);

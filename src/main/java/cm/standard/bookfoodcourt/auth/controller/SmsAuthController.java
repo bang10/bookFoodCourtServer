@@ -91,19 +91,14 @@ public class SmsAuthController {
 
             return ResponseEntity.badRequest().body(apiResponse);
         }
-        if (!authResultDto.getRequestRedisType().equals("join") && !authResultDto.getRequestRedisType().equals("id") && !authResultDto.getRequestRedisType().equals("pass")) {
-            apiResponse.code = "994";
-            apiResponse.message = "잘못된 코드입니다.";
-            apiResponse.result = false;
-
-            return ResponseEntity.ok(apiResponse);
-        }
 
         String key = "";
         switch (authResultDto.getRequestRedisType()) {
             case "join" -> key = "JOIN_KEY_";
             case "id" -> key = "ID_KEY_";
             case "pass" -> key = "PASS_KEY_";
+            case "manage" -> key = "ADMIN_MANEGE_KEY_"; // 관리자 ID
+            case "manager" -> key = "MANAGER_KEY_"; // 관리자 PW
             default -> {
                 log.debug("SmsAuthController checkSms >>> Not found key code: {}", authResultDto);
 
